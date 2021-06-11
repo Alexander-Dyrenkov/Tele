@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="ru.osp.cnn.core.model.SettingDO" lazy="false" table="CNN_SETTING">
+
+        <id
+            name="settingId"
+            column="SETTING_ID"
+            type="long"
+            length="12"
+        >
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence">CNN_SEQUENCE</param>
+                <param name="max_lo">100</param>
+            </generator>
+        </id>
+
+        <property
+                name="name"
+                column="NAME"
+                type="string"
+                length="50"
+                not-null="true"
+        />
+
+        <property
+                name="type"
+                column="TYPE"
+                length="1"
+                not-null="true"
+                >
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">ru.osp.cnn.core.model.SettingDO$Type</param>
+            </type>
+        </property>
+
+        <property
+            name="regularExpression"
+            column="REGULAR_EXPRESSION"
+            type="string"
+            length="50"
+        />
+
+        <property
+            name="description"
+            column="DESCRIPTION"
+            type="string"
+            length="100"
+        />
+
+        <idbag
+            name="values"
+            table="CNN_SETTING_VALUE"
+            lazy="false"
+        >
+            <collection-id type="long" length="12" column="VALUE_ID">
+                <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                    <param name="sequence">CNN_SEQUENCE</param>
+                    <param name="max_lo">100</param>
+                </generator>
+            </collection-id>
+
+            <key column="SETTING_ID"/>
+            <element type="string" length="50" column="VALUE"/>    
+        </idbag>
+
+    </class>
+
+    <query name="getSettingByName">
+            from SettingDO s where s.name = :setting_name
+    </query>
+
+</hibernate-mapping>

@@ -1,0 +1,80 @@
+- name: Deploy Core Helm
+  hosts: environment_host
+  tasks:
+    - name: Create namespace
+      shell: kubectl create namespace ${profileName}
+      ignore_errors: true
+
+    - name: Add docker login config
+      shell: kubectl create secret generic osp --from-file=.dockerconfigjson=/home/osp-admin/.docker/config.json --type=kubernetes.io/dockerconfigjson --namespace ${profileName}
+      ignore_errors: true
+
+    - name: Helm repo update
+      shell: helm repo update
+
+    - name: Helm delete old wiremock version
+      shell: helm del cnn-wiremock -n ${profileName}
+      ignore_errors: true
+
+    - name: Helm delete old cap gw version
+      shell: helm del cnn-cap-gw -n ${profileName}
+      ignore_errors: true
+
+    - name: Helm delete old smpp gw version
+      shell: helm del cnn-smpp-stub -n ${profileName}
+      ignore_errors: true
+
+    - name: Helm delete old smpp gw version
+      shell: helm del cnn-smpp-gw -n ${profileName}
+      ignore_errors: true
+
+    - name: Helm delete old core version
+      shell: helm del cnn-core -n ${profileName}
+      ignore_errors: true
+
+    - name: wiremock helm install
+      shell: >
+        helm install cnn-wiremock okd/wiremock
+        --version 1.0.0
+        --set settings.serviceName=${wiremock.service.name}
+        --namespace ${profileName}
+
+    - name: copy cap-gw config
+      shell: curl --request PUT --data-binary @${remote.core.dir}/config/cap-gw-settings.yml -u ${basic.auth.login}:${basic.auth.password} ${consul.url}/v1/kv/${cap.config.key}?raw=true
+
+    - name: cap gw helm install
+      shell: >
+        helm install cnn-cap-gw okd/cap-distributor
+        --set settings.serviceName=${cap.gw.service.name}
+        --set settings.nodeServiceName=${cap.gw.service.name}-node
+        --set settings.configKey=${cap.config.key}
+        --set capStub.settings.dbUrl=jdbc:oracle:thin:@db.arttelit.ru:1521:orcl
+        --set capStub.settings.dbUsername=cap_gw_tmp
+        --set capStub.settings.dbPassword=cap_gw_tmp
+        --version ${cap-gw.version}
+        --namespace ${profileName}
+
+    - name: install smpp-stub helm chart
+      shell: >
+        helm install cnn-smpp-stub okd/smpp-server
+        --version ${smpp-stub.version}
+        --set settings.serviceName=${smpp.stub.service.name}
+        --namespace ${profileName}
+
+    - name: copy smpp-gw config
+      shell: curl --request PUT --data-binary @${remote.core.dir}/config/smpp-gw-settings.yml -u ${basic.auth.login}:${basic.auth.password} ${consul.url}/v1/kv/${smpp.config.key}?raw=true
+
+    - name: smpp gw helm install
+      shell: >
+        helm install cnn-smpp-gw okd/smpp-gateway
+        --set settings.gatewayServiceName=${smpp.gw.service.name}
+        --set settings.smscServiceName=${smsc.gw.service.name}
+        --set settings.configKey=${smpp.config.key}
+        --version ${smpp-gw.version}
+        --namespace ${profileName}
+
+    - name: core helm install
+      shell: >
+        helm install cnn-core okd/cnn-core-${profileName}
+        --version ${project.version}
+        --namespace ${profileName}

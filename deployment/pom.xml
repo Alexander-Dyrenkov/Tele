@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>cnn</artifactId>
+        <groupId>ru.osp.cnn.core</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>deployment</artifactId>
+    <name>CNN CORE - Deployment</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <remote.app.root.dir>/tmp/cnn/${profileName}</remote.app.root.dir>
+        <remote.core.dir>${remote.app.root.dir}/docker</remote.core.dir>
+        <local.core.dir>../docker</local.core.dir>
+        <local.core.helm.dir>../helm/</local.core.helm.dir>
+        <remote.core.helm.dir>${remote.app.root.dir}/helm</remote.core.helm.dir>
+
+        <private.docker.registry>registry.gitlab.com/newosp/projects/osp/commons/docker-images</private.docker.registry>
+        <private.registry.user>deployment</private.registry.user>
+        <private.registry.password>x2CH36Lz-q9DSByoAsqG</private.registry.password>
+
+        <cnn.core.base.image>${private.docker.registry}/centos-jdk11:0.1</cnn.core.base.image>
+        <cnn.core.image.name>${private.docker.registry}/cnn_core_${profileName}:${project.version}</cnn.core.image.name>
+
+        <wiremock.service.name>cnn-wiremock-${profileName}</wiremock.service.name>
+        <cap.gw.service.name>cnn-cap-gw-${profileName}</cap.gw.service.name>
+        <smpp.gw.service.name>cnn-smpp-gw-${profileName}</smpp.gw.service.name>
+        <smsc.gw.service.name>cnn-smsc-${profileName}</smsc.gw.service.name>
+        <smpp.stub.service.name>cnn-smpp-stub-${profileName}</smpp.stub.service.name>
+        <consul.url>http://kube.arttelit.ru/consul</consul.url>
+        <cap.config.key>cnn_cap_config_${profileName}</cap.config.key>
+        <smpp.config.key>cnn_smpp_config_${profileName}</smpp.config.key>
+        <basic.auth.login>deployment</basic.auth.login>
+        <basic.auth.password>PWhTxr1d5Lh3</basic.auth.password>
+
+        <http.secret.key>secret_key</http.secret.key>
+
+        <ansible-executable>ansible-playbook</ansible-executable>
+        <ansible-arg-1/>
+        <ansible-arg-2/>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>deploy-wsl</id>
+            <activation>
+                <os><family>windows</family></os>
+            </activation>
+            <properties>
+                <ansible-executable>wsl</ansible-executable>
+                <ansible-arg-1>-e</ansible-arg-1>
+                <ansible-arg-2>ansible-playbook</ansible-arg-2>
+            </properties>
+        </profile>
+        <profile>
+            <id>deployment</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-deployment-resources</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-configuration-resources</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/docker/config</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>../src/main/config</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-templates</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/docker/config/templates</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>../src/main/templates</directory>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-core-assembly</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/docker</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>../core/target</directory>
+                                            <includes>
+                                                <include>cnn-core-${project.version}.jar</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <!-- ************************************ -->
+                            <!--        BUILD CORE DOCKER IMAGE       -->
+                            <!-- ************************************ -->
+                            <execution>
+                                <id>build_core_docker_image</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <workingDirectory>target/ansible</workingDirectory>
+                                    <executable>${ansible-executable}</executable>
+                                    <arguments>
+                                        <argument>${ansible-arg-1}</argument>
+                                        <argument>${ansible-arg-2}</argument>
+                                        <argument>build_core_docker_image.yml</argument>
+                                        <argument>-f</argument>
+                                        <argument>10</argument>
+                                        <argument>-i</argument>
+                                        <argument>inventory</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- ************************************ -->
+                            <!--        BUILD CORE HELM CHART         -->
+                            <!-- ************************************ -->
+                            <execution>
+                                <id>build_core_helm_chart</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <workingDirectory>target/ansible</workingDirectory>
+                                    <executable>${ansible-executable}</executable>
+                                    <arguments>
+                                        <argument>${ansible-arg-1}</argument>
+                                        <argument>${ansible-arg-2}</argument>
+                                        <argument>build_core_helm_chart.yml</argument>
+                                        <argument>-f</argument>
+                                        <argument>10</argument>
+                                        <argument>-i</argument>
+                                        <argument>inventory</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- ******************************************* -->
+                            <!--        RUN CORE HELM CHART                  -->
+                            <!-- ******************************************* -->
+                            <execution>
+                                <id>redeploy_core_environment</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <workingDirectory>target/ansible</workingDirectory>
+                                    <executable>${ansible-executable}</executable>
+                                    <arguments>
+                                        <argument>${ansible-arg-1}</argument>
+                                        <argument>${ansible-arg-2}</argument>
+                                        <argument>helm_deploy.yml</argument>
+                                        <argument>-f</argument>
+                                        <argument>10</argument>
+                                        <argument>-i</argument>
+                                        <argument>inventory</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

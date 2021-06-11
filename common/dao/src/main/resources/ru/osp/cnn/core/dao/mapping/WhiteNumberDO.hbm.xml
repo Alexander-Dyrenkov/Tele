@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="ru.osp.cnn.core.model.WhiteNumberDO" lazy="false" table="CNN_WHITE_NUMBER">
+        <id
+            name="whiteNumberId"
+            column="WHITE_NUMBER_ID"
+            type="long"
+            length="12"
+        >
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence">CNN_SEQUENCE</param>
+                <param name="max_lo">100</param>
+            </generator>
+        </id>
+
+        <property
+                name="serviceId"
+                column="SERVICE_ID"
+                type="long"
+                length="12"
+                not-null="true"
+        />
+
+        <property
+            name="whiteNumber"
+            type="string"
+            column="WHITE_NUMBER"
+            length="11"
+            not-null="true"
+        />
+
+        <property
+            name="createTime"
+            type="timestamp"
+            column="CREATE_TIME"
+        />
+    </class>
+
+    <query name="getWhiteNumbersByServiceId">
+        from WhiteNumberDO w
+        where w.serviceId = :serviceId
+        order by w.createTime asc
+    </query>
+
+    <query name="removeAllByServiceId">
+        delete WhiteNumberDO w where w.serviceId = :serviceId
+    </query>
+
+</hibernate-mapping>

@@ -1,0 +1,15 @@
+[Unit]
+Description=CNN Core
+After=network.target
+
+[Service]
+Type=simple
+User=lanit
+Group=lanit
+WorkingDirectory=/opt/lanit
+ExecStart=/opt/lanit/start.sh
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,42 @@
+service_uri: /restcomm/smpp
+parlay_like_gw: true
+
+smpp:
+  smpp_submit_sm_timeout: 1000
+  #smpp_source_type_of_number, smpp_source_numbering_plan_indicator, smpp_source_address, smpp_message_type, smpp_protocol_id, smpp_encoding unused in ParlayLike mode
+  #SubmitSmEsmClass
+  smpp_source_type_of_number: 1
+  smpp_source_numbering_plan_indicator: 1
+  smpp_destination_type_of_number: 1
+  smpp_destination_numbering_plan_indicator: 1
+  smpp_message_type: 0
+  smpp_protocol_id: 0
+  smpp_encoding: 0
+  # deliver_sm_url&deliver_sm_zero_url unused in parlayLike mode
+  deliver_sm_url: localhost:8080/smsInbound
+  deliver_sm_zero_url: localhost:8080/zeroSmsInbound
+  deliver_sm_data_regex: "^(id:\\d+)\\s(sub:\\d+)\\s(dlvrd:\\d+)\\s(submit date:\\d+)\\s(done date:\\d+)\\s(stat:\\S*)\\s(err:\\w+)\\s(text:.*)$"
+  default_error_command_status: 0x00000008
+
+statistic:
+  reset_statistic_period: 0
+  auto_statistic_period: 1000
+  write_statistics_period: 60000
+  statistic_executor_pool_size: 8
+
+http:
+  http_client_connection_timeout: 5000
+  http_client_socket_timeout: 5000
+  secret_key: ${http.secret.key}
+
+esmeGroups:
+  - groupName: ECC
+    clusterName: nameCluster
+    systemId: test
+    defaultSourceTon: 1
+    defaultSourceNpi: 1
+    defaultSourceAddress: 79037430045
+    defaultMessageType: 0
+    defaultProtocolId: 0
+    defaultEncoding: 0
+    callbackURL: localhost:8080/smsInbound

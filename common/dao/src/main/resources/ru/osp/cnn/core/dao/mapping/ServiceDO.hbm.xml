@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="ru.osp.cnn.core.model.ServiceDO" lazy="false" table="CNN_SERVICE">
+        <id
+                name="serviceId"
+                column="SERVICE_ID"
+                type="long"
+                length="12"
+        >
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence">CNN_SEQUENCE</param>
+                <param name="max_lo">100</param>
+            </generator>
+        </id>
+
+        <property
+            name="newMsisdn"
+            type="string"
+            column="NEW_MSISDN"
+            length="11"
+            not-null="true"
+        />
+
+        <property
+            name="oldMsisdn"
+            type="string"
+            column="OLD_MSISDN"
+            length="11"
+            not-null="true"
+        />
+
+        <property
+            name="techNumberMsisdn"
+            type="string"
+            column="TECH_NUMBER_MSISDN"
+            length="11"
+        />
+
+        <property
+            name="activationDate"
+            type="timestamp"
+            column="ACTIVATION_DATE"
+            not-null="true"
+        />
+
+        <property
+            name="status"
+            column="STATUS"
+            length="2"
+            not-null="true"
+        >
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">ru.osp.cnn.core.model.ServiceStatus</param>
+            </type>
+        </property>
+
+        <property
+            name="subscriberBlockType"
+            type="string"
+            column="SUBSCRIBER_BLOCK_TYPE"
+            length="1"
+            not-null="true"
+        />
+
+        <property
+            name="firstNotification"
+            type="yes_no"
+            column="IS_FIRST_NOTIFICATION"
+            length="1"
+            not-null="true"
+        />
+
+        <property
+            name="asyncOperationDate"
+            type="timestamp"
+            column="ASYNC_OPERATION_DATE"
+        />
+
+        <property
+            name="langCode"
+            type="string"
+            column="LANG_CODE"
+            length="3"
+        />
+
+        <property
+            name="removalDate"
+            column="REMOVAL_DATE"
+            type="calendar"
+        />
+
+        <property
+            name="removeAfterDate"
+            column="REMOVE_AFTER_DATE"
+            type="calendar"
+        />
+
+    </class>
+
+    <query name="getServiceByNewMsisdn">
+        from ServiceDO s where s.newMsisdn = :msisdn
+    </query>
+
+    <query name="findServiceByNewMsisdnAndStatuses">
+        from ServiceDO s where s.newMsisdn = :msisdn and s.status in (:statuses)
+    </query>
+
+    <query name="getServiceByTechNumber">
+        from ServiceDO s where s.techNumberMsisdn = :techNumber
+    </query>
+
+    <query name="getServicesBeforeActivationDate">
+        <![CDATA[from ServiceDO s where s.activationDate <= :activationDate]]>
+    </query>
+
+    <query name="getServicesBeforeAsyncOperationDate">
+        <![CDATA[from ServiceDO s where s.asyncOperationDate <= :asyncOperationDate]]>
+    </query>
+
+</hibernate-mapping>

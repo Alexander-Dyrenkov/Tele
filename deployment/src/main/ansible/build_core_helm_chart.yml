@@ -1,0 +1,13 @@
+- hosts: environment_host
+  tasks:
+    - name: Remove old helm dir
+      file: name=${remote.core.helm.dir} state=absent
+
+    - name: Create remote helm dir
+      file: name=${remote.core.helm.dir}/ state=directory
+
+    - name: Copy helm dir
+      copy: src=${local.core.helm.dir}/ dest=${remote.core.helm.dir}
+
+    - name: Package chart
+      shell: helm nexus-push okd ${remote.core.helm.dir} -f okd && helm repo update

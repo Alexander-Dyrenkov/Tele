@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.settings.serviceName }}-node
+  labels:
+    app: cnn-core
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: NodePort
+  ports:
+    - name: ssh-port
+      port: 22
+      targetPort: 22
+
+    - name: cnn-core-debug-port
+      port: 5005
+      targetPort: 5005
+
+    - name: cnn-core-http-port
+      port: 8080
+      targetPort: 8080
+
+  selector:
+    app: cnn-core
+    release: {{ .Release.Name }}

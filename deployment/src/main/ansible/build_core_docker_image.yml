@@ -1,0 +1,26 @@
+- hosts: environment_host
+  tasks:
+    - name: Remove old docker img src dir
+      file: name=${remote.core.dir} state=absent
+
+    - name: Create remote docker img src dir
+      file: name=${remote.core.dir}/ state=directory
+
+    - name: Copy prepared docker distr
+      copy: src=${local.core.dir}/ dest=${remote.core.dir}/
+
+    - name: Docker login
+      shell: docker login -u ${private.registry.user} -p ${private.registry.password} ${private.docker.registry}
+
+    - name: Build docker image
+      shell: chdir=${remote.core.dir}
+        docker build
+        --no-cache
+        --rm
+        --force-rm
+        --pull
+        -t ${cnn.core.image.name}
+        .
+
+    - name: Push docker image
+      shell: docker push ${cnn.core.image.name}

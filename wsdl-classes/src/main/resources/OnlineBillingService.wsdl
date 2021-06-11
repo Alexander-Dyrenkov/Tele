@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://eai.arstel.com" xmlns:impl="http://eai.arstel.com" xmlns:intf="http://eai.arstel.com" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ws-i.org/profiles/basic/1.1/xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <schema targetNamespace="http://eai.arstel.com" xmlns="http://www.w3.org/2001/XMLSchema">
+
+<!--
+    OnlineBillingService build 20.3
+    OnlineBillingService WSDL version 0.11
+-->
+
+   <element name="addNonparametrizedSocResponse">
+    <complexType>
+     <sequence>
+      <element name="addNonparametrizedSocReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="findHierarchyId">
+    <complexType>
+     <sequence>
+      <element name="banID" nillable="true" type="xsd:int"/>
+      <element name="ctnNumber" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="findHierarchyIdResponse">
+    <complexType>
+     <sequence>
+      <element name="findHierarchyIdReturn" nillable="true" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="removeSOC">
+    <complexType>
+     <sequence>
+      <element name="banID" nillable="true" type="xsd:int"/>
+      <element name="ctnID" nillable="true" type="xsd:string"/>
+      <element name="nameSOC" nillable="true" type="xsd:string"/>
+      <element name="reason" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="removeSOCResponse">
+    <complexType>
+     <sequence>
+      <element name="removeSOCReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="disableFeature">
+    <complexType>
+     <sequence>
+      <element name="banID" nillable="true" type="xsd:int"/>
+      <element name="ctnID" nillable="true" type="xsd:string"/>
+      <element name="nameSOC" nillable="true" type="xsd:string"/>
+      <element name="featureCode" nillable="true" type="xsd:string"/>
+      <element name="reason" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="disableFeatureResponse">
+    <complexType>
+     <sequence>
+      <element name="disableFeatureReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getStatusByRequestId">
+    <complexType>
+     <sequence>
+      <element name="requestID" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getStatusByRequestIdResponse">
+    <complexType>
+     <sequence>
+      <element name="getStatusByRequestIdReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="enableFeature">
+    <complexType>
+     <sequence>
+      <element name="banID" nillable="true" type="xsd:int"/>
+      <element name="ctnID" nillable="true" type="xsd:string"/>
+      <element name="nameSOC" nillable="true" type="xsd:string"/>
+      <element name="feature" nillable="true" type="impl:Feature"/>
+      <element name="reason" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="enableFeatureResponse">
+    <complexType>
+     <sequence>
+      <element name="enableFeatureReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="retrieveCustomerHierarchy">
+    <complexType>
+     <sequence>
+      <element name="rootNodeId" nillable="true" type="impl:NodeId"/>
+      <element name="flagExcludeChildElements" nillable="true" type="impl:LogicalType"/>
+      <element name="elementFilter" nillable="true" type="impl:ElementFilter"/>
+      <element name="includeAttributes" nillable="true" type="impl:IncludesAttributes"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="retrieveCustomerHierarchyResponse">
+    <complexType>
+     <sequence>
+      <element name="retrieveCustomerHierarchyReturn" nillable="true" type="impl:CustomerHierarchy"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="changeSOCFeatureParameter">
+    <complexType>
+     <sequence>
+      <element name="banID" nillable="true" type="xsd:int"/>
+      <element name="ctnID" nillable="true" type="xsd:string"/>
+      <element name="nameSOC" nillable="true" type="xsd:string"/>
+      <element name="feature" nillable="true" type="impl:Feature"/>
+      <element name="reason" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="changeSOCFeatureParameterResponse">
+    <complexType>
+     <sequence>
+      <element name="changeSOCFeatureParameterReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="addParametrizedSoc">
+    <complexType>
+     <sequence>
+      <element name="banID" nillable="true" type="xsd:int"/>
+      <element name="ctnID" nillable="true" type="xsd:string"/>
+      <element name="nameSOC" nillable="true" type="xsd:string"/>
+      <element name="features" nillable="true" type="impl:ArrayOfFeature"/>
+      <element name="reason" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="addParametrizedSocResponse">
+    <complexType>
+     <sequence>
+      <element name="addParametrizedSocReturn" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="addNonparametrizedSoc">
+    <complexType>
+     <sequence>
+      <element name="banID" nillable="true" type="xsd:int"/>
+      <element name="ctnID" nillable="true" type="xsd:string"/>
+      <element name="nameSOC" nillable="true" type="xsd:string"/>
+      <element name="reason" nillable="true" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <complexType name="ServiceException">
+    <sequence>
+     <element name="description" nillable="true" type="xsd:string"/>
+     <element name="errorCode" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <element name="ServiceException" nillable="true" type="impl:ServiceException"/>
+   <complexType name="Feature">
+    <sequence>
+     <element name="featureCode" nillable="true" type="xsd:string"/>
+     <element name="featureParameters" nillable="true" type="impl:ArrayOfFeatureParameter"/>
+    </sequence>
+   </complexType>
+   <complexType name="FeatureParameter">
+    <sequence>
+     <element name="parameterName" nillable="true" type="xsd:string"/>
+     <element name="parameterValue" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ArrayOfFeatureParameter">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="FeatureParameter" nillable="true" type="impl:FeatureParameter"/>
+    </sequence>
+   </complexType>
+   <complexType name="NodeId">
+    <sequence>
+     <element name="idBenAndBanName" nillable="true" type="impl:BenAndBanName"/>
+     <element name="idCustomerHierarchy" nillable="true" type="xsd:int"/>
+     <element name="idBAN" nillable="true" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="BenAndBanName">
+    <sequence>
+     <element name="idBEN" type="xsd:int"/>
+     <element name="idBAN" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <simpleType name="LogicalType">
+    <restriction base="xsd:string">
+     <enumeration value="N"/>
+     <enumeration value="Y"/>
+    </restriction>
+   </simpleType>
+   <complexType name="ElementFilter">
+    <sequence>
+     <element name="flagIncludeOnlyActiveCTN" nillable="true" type="impl:LogicalType"/>
+     <element name="codeSOC" nillable="true" type="xsd:string"/>
+     <element name="ctnBySocFilter" nillable="true" type="impl:CtnBySocFilter"/>
+    </sequence>
+   </complexType>
+   <simpleType name="CtnBySocFilter">
+    <restriction base="xsd:string">
+     <enumeration value="A"/>
+     <enumeration value="N"/>
+     <enumeration value="E"/>
+    </restriction>
+   </simpleType>
+   <complexType name="IncludesAttributes">
+    <sequence>
+     <element name="attributesMask" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="CustomerHierarchy">
+    <sequence>
+     <element name="document" nillable="true" type="xsd:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="ArrayOfFeature">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="Feature" nillable="true" type="impl:Feature"/>
+    </sequence>
+   </complexType>
+  </schema>
+  </wsdl:types>
+  <wsdl:message name="enableFeatureRequest">
+    <wsdl:part name="parameters" element="impl:enableFeature"/>
+  </wsdl:message>
+  <wsdl:message name="addParametrizedSocRequest">
+    <wsdl:part name="parameters" element="impl:addParametrizedSoc"/>
+  </wsdl:message>
+  <wsdl:message name="findHierarchyIdRequest">
+    <wsdl:part name="parameters" element="impl:findHierarchyId"/>
+  </wsdl:message>
+  <wsdl:message name="retrieveCustomerHierarchyRequest">
+    <wsdl:part name="parameters" element="impl:retrieveCustomerHierarchy"/>
+  </wsdl:message>
+  <wsdl:message name="addNonparametrizedSocRequest">
+    <wsdl:part name="parameters" element="impl:addNonparametrizedSoc"/>
+  </wsdl:message>
+  <wsdl:message name="enableFeatureResponse">
+    <wsdl:part name="parameters" element="impl:enableFeatureResponse"/>
+  </wsdl:message>
+  <wsdl:message name="ServiceException">
+    <wsdl:part name="fault" element="impl:ServiceException"/>
+  </wsdl:message>
+  <wsdl:message name="getStatusByRequestIdRequest">
+    <wsdl:part name="parameters" element="impl:getStatusByRequestId"/>
+  </wsdl:message>
+  <wsdl:message name="changeSOCFeatureParameterResponse">
+    <wsdl:part name="parameters" element="impl:changeSOCFeatureParameterResponse"/>
+  </wsdl:message>
+  <wsdl:message name="disableFeatureRequest">
+    <wsdl:part name="parameters" element="impl:disableFeature"/>
+  </wsdl:message>
+  <wsdl:message name="findHierarchyIdResponse">
+    <wsdl:part name="parameters" element="impl:findHierarchyIdResponse"/>
+  </wsdl:message>
+  <wsdl:message name="removeSOCRequest">
+    <wsdl:part name="parameters" element="impl:removeSOC"/>
+  </wsdl:message>
+  <wsdl:message name="getStatusByRequestIdResponse">
+    <wsdl:part name="parameters" element="impl:getStatusByRequestIdResponse"/>
+  </wsdl:message>
+  <wsdl:message name="disableFeatureResponse">
+    <wsdl:part name="parameters" element="impl:disableFeatureResponse"/>
+  </wsdl:message>
+  <wsdl:message name="changeSOCFeatureParameterRequest">
+    <wsdl:part name="parameters" element="impl:changeSOCFeatureParameter"/>
+  </wsdl:message>
+  <wsdl:message name="addNonparametrizedSocResponse">
+    <wsdl:part name="parameters" element="impl:addNonparametrizedSocResponse"/>
+  </wsdl:message>
+  <wsdl:message name="retrieveCustomerHierarchyResponse">
+    <wsdl:part name="parameters" element="impl:retrieveCustomerHierarchyResponse"/>
+  </wsdl:message>
+  <wsdl:message name="addParametrizedSocResponse">
+    <wsdl:part name="parameters" element="impl:addParametrizedSocResponse"/>
+  </wsdl:message>
+  <wsdl:message name="removeSOCResponse">
+    <wsdl:part name="parameters" element="impl:removeSOCResponse"/>
+  </wsdl:message>
+  <wsdl:portType name="OnlineBillingService">
+    <wsdl:operation name="addNonparametrizedSoc">
+      <wsdl:input name="addNonparametrizedSocRequest" message="impl:addNonparametrizedSocRequest"/>
+      <wsdl:output name="addNonparametrizedSocResponse" message="impl:addNonparametrizedSocResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="findHierarchyId">
+      <wsdl:input name="findHierarchyIdRequest" message="impl:findHierarchyIdRequest"/>
+      <wsdl:output name="findHierarchyIdResponse" message="impl:findHierarchyIdResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="removeSOC">
+      <wsdl:input name="removeSOCRequest" message="impl:removeSOCRequest"/>
+      <wsdl:output name="removeSOCResponse" message="impl:removeSOCResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="disableFeature">
+      <wsdl:input name="disableFeatureRequest" message="impl:disableFeatureRequest"/>
+      <wsdl:output name="disableFeatureResponse" message="impl:disableFeatureResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="getStatusByRequestId">
+      <wsdl:input name="getStatusByRequestIdRequest" message="impl:getStatusByRequestIdRequest"/>
+      <wsdl:output name="getStatusByRequestIdResponse" message="impl:getStatusByRequestIdResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="enableFeature">
+      <wsdl:input name="enableFeatureRequest" message="impl:enableFeatureRequest"/>
+      <wsdl:output name="enableFeatureResponse" message="impl:enableFeatureResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveCustomerHierarchy">
+      <wsdl:input name="retrieveCustomerHierarchyRequest" message="impl:retrieveCustomerHierarchyRequest"/>
+      <wsdl:output name="retrieveCustomerHierarchyResponse" message="impl:retrieveCustomerHierarchyResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="changeSOCFeatureParameter">
+      <wsdl:input name="changeSOCFeatureParameterRequest" message="impl:changeSOCFeatureParameterRequest"/>
+      <wsdl:output name="changeSOCFeatureParameterResponse" message="impl:changeSOCFeatureParameterResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+    <wsdl:operation name="addParametrizedSoc">
+      <wsdl:input name="addParametrizedSocRequest" message="impl:addParametrizedSocRequest"/>
+      <wsdl:output name="addParametrizedSocResponse" message="impl:addParametrizedSocResponse"/>
+      <wsdl:fault name="ServiceException" message="impl:ServiceException"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="OnlineBillingServiceSoapBinding" type="impl:OnlineBillingService">
+    <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="addNonparametrizedSoc">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="addNonparametrizedSocRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="addNonparametrizedSocResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="findHierarchyId">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="findHierarchyIdRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findHierarchyIdResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="removeSOC">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="removeSOCRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeSOCResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="disableFeature">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="disableFeatureRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="disableFeatureResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="getStatusByRequestId">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="getStatusByRequestIdRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getStatusByRequestIdResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="enableFeature">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="enableFeatureRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="enableFeatureResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveCustomerHierarchy">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="retrieveCustomerHierarchyRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="retrieveCustomerHierarchyResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="changeSOCFeatureParameter">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="changeSOCFeatureParameterRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="changeSOCFeatureParameterResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="addParametrizedSoc">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="addParametrizedSocRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="addParametrizedSocResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <wsdlsoap:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OnlineBillingServiceService">
+    <wsdl:port name="OnlineBillingService" binding="impl:OnlineBillingServiceSoapBinding">
+      <wsdlsoap:address location="http://ms-eaifs001.bee.vimpelcom.ru:9999/OnlineBillingServiceWeb/services/OnlineBillingService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

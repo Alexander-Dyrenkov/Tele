@@ -1,0 +1,26 @@
+<configuration basedir="src/main/testers" scriptspath="." stopOnFail="true" filterFiles="true" scriptEncoding="UTF-8">
+
+    <util name="CommonUtil" class="CommonUtil"/>
+    <util name="XmlUtil" class="XmlUtil"/>
+    <util name="DbUtil" class="DbUtil" driver="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@172.29.28.188:1521:oracsid" user="CNN_MSEREGIN"
+          password="CNN_MSEREGIN"/>
+    <util name="DbUtilCDS" class="DbUtil" driver="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@172.29.28.188:1521:oracsid" user="CNN_MSEREGIN"
+          password="CNN_MSEREGIN"/>
+    <util name="SwitchControlUtil" class="SoapUtil" baseUrl="http://localhost:9001/cnn/"/>
+
+	<util name="CoreWebLogicJndiUtil" class="WebLogicJndiUtil"
+		  host="localhost"
+          port="37001"
+		  username="weblogic"
+		  password="weblogic"/>
+
+    <util name="parlayStubSoapUtil"
+          class="SoapUtil"
+          baseUrl="http://localhost:9066/"/>
+
+    <property name="SC_CONTEXT" value="sc/SwitchControlService.jws"/>
+
+    <property name="PARLAY_STUB_CONTEXT" value="par"/>
+    <property name="BACKOFFICE_HOST" value="http://localhost:8001"/>
+
+</configuration>

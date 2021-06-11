@@ -1,0 +1,8 @@
+replicaCount: 1
+
+image:
+  name: ${cnn.core.image.name}
+  pullPolicy: Always
+
+settings:
+  serviceName: cnn-core-${profileName}

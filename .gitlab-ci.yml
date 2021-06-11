@@ -1,0 +1,57 @@
+image: registry.gitlab.com/newosp/projects/osp/commons/docker-images/fmtntas-ci-env:1.6
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -XX:PermSize=256m -XX:MaxPermSize=512m"
+  CNN_CI_PIPELINE_ID: "$CI_PIPELINE_ID"
+  PROFILE_NAME: "$PROFILE_NAME"
+
+cache:
+  key: cnn-cache
+  paths:
+    - .m2/repository
+
+stages:
+  - pre-build-master
+  - pre-build
+  - install
+
+# Sets one variables:
+# - PROFILE_NAME : Unique identifier. For typical jobs it looks like "citest_1234", but for protected branches (except dev) it is the name of the branch. [vch]
+
+before_script:
+  - if [ -n "$PROFILE_NAME" ]; then export MVN_PROFILE=$PROFILE_NAME",deployment"; else export PROFILE_NAME=citest_"$CI_PIPELINE_ID"; export MVN_PROFILE=citest; fi
+  - if [ "$CI_COMMIT_REF_NAME" == "master" ]; then export MVN_STAGE="deploy"; else export MVN_STAGE="install"; fi
+  - echo mvn clean "$MVN_STAGE" -P"$MVN_PROFILE",database_recreation -DprofileName="$PROFILE_NAME" -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  - env
+
+create-db-master:
+  stage: pre-build-master
+  trigger:
+    project: NewOSP/Projects/VK/cnn
+    branch: master
+    strategy: depend
+
+create-db:
+  stage: pre-build
+  trigger:
+    project: NewOSP/Projects/VK/cnn
+    branch: $CI_COMMIT_BRANCH
+    strategy: depend
+  allow_failure: true
+
+build:
+  stage: install
+  script:
+    - mvn clean "$MVN_STAGE" -P"$MVN_PROFILE" -DprofileName="$PROFILE_NAME" -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  artifacts:
+    name: "${CI_PROJECT_NAME}_${CI_PIPELINE_ID}"
+    when: always
+    paths:
+      - common/dao/target
+      - common/service/target
+      - core/target
+    expire_in: 1 week
+  cache:
+    key: maven
+    paths:
+      - ${CI_PROJECT_DIR}/.m2

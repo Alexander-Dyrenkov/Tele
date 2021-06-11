@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="ru.osp.cnn.core.model.SmsControlRecordDO" lazy="false" table="CNN_SMS_CONTROL_RECORD">
+        <id
+            name="recordId"
+            column="LIST_ITEM_ID"
+            type="long"
+            length="12"
+            unsaved-value="null"
+        >
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence">CNN_SEQUENCE</param>
+                <param name="max_lo">100</param>
+            </generator>
+        </id>
+
+        <property
+            name="serviceId"
+            column="SERVICE_ID"
+            type="long"
+            length="12"
+            not-null="true"
+        />
+
+        <property
+            name="shortSmsNumber"
+            type="string"
+            column="SHORT_SMS_NUMBER"
+            length="11"
+            not-null="true"
+        />
+
+        <property
+            name="callerNumber"
+            type="string"
+            column="CALLER_NUMBER"
+            length="11"
+            not-null="true"
+        />
+
+        <property
+            name="sendDate"
+            type="timestamp"
+            column="SEND_DATE"
+            not-null="true"
+        />
+    </class>
+
+    <query name="removeAllSmsByServiceId">
+        delete SmsControlRecordDO s where s.serviceId = :serviceId    
+    </query>
+
+    <query name="deleteExpiredSmsControlRecordsOnDate"><![CDATA[
+        delete SmsControlRecordDO s where s.sendDate <= :sendDate
+        ]]>
+    </query>
+
+    <query name="findSmsControlRecordsByServiceId">
+        from SmsControlRecordDO s where s.serviceId = :serviceId
+    </query>
+
+    <query name="findSmsControlRecordsByServiceIdAndCallerNumber">
+        from SmsControlRecordDO s where s.serviceId = :serviceId and s.callerNumber = :callerNumber
+    </query>
+
+    <query name="findSmsControlRecordsByServiceAndCalledNumber">
+        from SmsControlRecordDO s where s.serviceId = :serviceId and s.shortSmsNumber = :shortNumber
+    </query>
+</hibernate-mapping>

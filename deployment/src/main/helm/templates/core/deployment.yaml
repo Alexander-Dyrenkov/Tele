@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.settings.serviceName }}
+  labels:
+    app: cnn-core
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: cnn-core
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: cnn-core
+        release: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+        - name: osp
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.name }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            privileged: true

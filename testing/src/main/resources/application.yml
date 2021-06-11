@@ -1,0 +1,13 @@
+spring:
+  jmx:
+    enabled: true
+
+server:
+  port: 8081
+  compression:
+    enabled: true
+  tomcat:
+    accept-count: 1000
+  http:
+    port: 8081
+    interface: 0.0.0.0
