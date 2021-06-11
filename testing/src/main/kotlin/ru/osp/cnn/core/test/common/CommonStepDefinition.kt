@@ -1,29 +1,21 @@
 package ru.osp.cnn.core.test
 
 import cucumber.api.java.ru.Дано
+import cucumber.api.java.ru.Затем
 import cucumber.api.java.ru.И
+import cucumber.api.java.ru.Тогда
+import org.junit.Assert
 import ru.osp.cnn.core.model.ServiceStatus
+import ru.osp.cnn.core.model.CnnDataAccessConstants.Companion
 import ru.osp.cnn.core.test.util.Context
 import ru.osp.cnn.core.test.util.SetUp
 
 
 class CommonStepDefinition {
-    val SERVICE_STATUS = mapOf(
-            ServiceStatus.DISABLED to "0" ,                // Услуга отключена
-            ServiceStatus.SUSPENDED to "1",               // Услуга остановлена
-            ServiceStatus.NOTIFICATION_FOR_ALL to "2",    // Включено оповещение для всех
-            ServiceStatus.SELECTIVE_NOTIFICATION to "3"   // Включена выборочная нотификация
-    )
-    val LANGUAGE_CODE = mapOf(
-                "ENG" to "045",
-                "BEL" to "090",
-                "RUS" to "570",
-                "UKR" to "720"
-    )
     private val setUp = SetUp()
     var cnnService = setUp.getDefaultCnnService()
-    var status = SERVICE_STATUS[ServiceStatus.NOTIFICATION_FOR_ALL]
-    var languageCode = LANGUAGE_CODE["ENG"]
+    var status = Context.SERVICE_STATUS[ServiceStatus.NOTIFICATION_FOR_ALL]
+    var languageCode = Context.LANGUAGE_CODE["ENG"]
     var currentDate = setUp.getCurrentDbDate()
     var currentDateInsert = getDbTimeForInsert(currentDate)
 
@@ -50,7 +42,7 @@ class CommonStepDefinition {
 
     @И("Добавление течнического номера и ответа заглушки для отправки СМС")
     fun techNumberAdding() {
-        addCnnTechNumber(techMsisdn, TECH_NUMBER_STATE.VACANT, marketCode, currentDateInsert)
+        addCnnTechNumber(techMsisdn, Context.TECH_NUMBER_STATE["VACANT"], marketCode, currentDateInsert)
         addSendSMSResponse()
     }
     @И("Подключение сервиса")
@@ -62,7 +54,7 @@ class CommonStepDefinition {
         var actualCnnTechNumber = findCnnTechNumberByTechNumberMsisdn(techMsisdn)
         var expectedCnnTechNumber = hashMapOf (
             "techNumberMsisdn" to techMsisdn,
-            "techNumberState" to TECH_NUMBER_STATE. ASSIGNED,
+            "techNumberState" to Context.TECH_NUMBER_STATE["ASSIGNED"],
             "marketCode" to marketCode,
             "lastOperationDate" to currentDate
         )
@@ -75,10 +67,10 @@ class CommonStepDefinition {
         var expectedCnnService = hashMapOf (
             "newMsisdn" to Context.msisdn,
             "oldMsisdn" to Context.oldMsisdn,
-            "subscriberBlockType" to SERVICE_SUBSCRIBER_BLOCK_TYPE.NOT_BLOCKED,
+            "subscriberBlockType" to Context.SERVICE_SUBSCRIBER_BLOCK_TYPE[Companion.NOT_BLOCKED],
             "activationDate" to currentDate,
-            "status" to SERVICE_STATUS.NOTIFICATION_FOR_ALL,
-            "isFirstNotification" to false,
+            "status" to Context.SERVICE_STATUS[ServiceStatus.NOTIFICATION_FOR_ALL],
+            "isFirstNotification" to Context.BOOLEAN["FALSE"],
             "asyncOperationDate" to null,
             "techNumberMsisdn" to techMsisdn,
             "langCode" to languageCode
@@ -89,8 +81,8 @@ class CommonStepDefinition {
     @И("Проверка сколько СМС было отправлено")
     fun totalSMSChecking() {
         checkTotalSmsSent(2)
-        checkSmsSent(SMS_TEMPLATE.CNN_REDIRECTION_INSTRUCTION_NE, Context.msisdn, 1)
-        checkSmsSent(SMS_TEMPLATE.CNN_REDIRECTION_INSTRUCTION, Context.oldMsisdn, 1)
+        checkSmsSent(Context.SMS_TEMPLATE["CNN_REDIRECTION_INSTRUCTION_NE"], Context.msisdn, 1)
+        checkSmsSent(Context.SMS_TEMPLATE["CNN_REDIRECTION_INSTRUCTION"], Context.oldMsisdn, 1)
     }
     @Дано("msisdn: {string}, старый msisdn: {string}")
     fun getMsisdnNumbers(msisdn: String, old_msisdn: String) {
@@ -99,13 +91,18 @@ class CommonStepDefinition {
     }
     @И("заполнение базы")
     fun setDataBase() {
-        cnnService["NEW_MSISDN"] = Context.msisdn;
-        cnnService["OLD_MSISDN"] = Context.oldMsisdn;
-        cnnService["SUBSCRIBER_BLOCK_TYPE"] = SUBSCRIBER_BLOCK_TYPE.NOT_BLOCKED
-        setUp.insertRecord(DbUtil, "CNN_SERVICE", cnnService);
+        cnnService["NEW_MSISDN"] = Context.msisdn
+        cnnService["OLD_MSISDN"] = Context.oldMsisdn
+        cnnService["SUBSCRIBER_BLOCK_TYPE"] = Context.SUBSCRIBER_BLOCK_TYPE[Companion.NOT_BLOCKED]
+        setUp.insertRecord(DbUtil, "CNN_SERVICE", cnnService)
     }
-    @И("")
-    fun chtoto() {
-
+    @Тогда("выполнение теста")
+    fun executionTest() {
+        setUp.changeAccountParameters(Context.msisdn, hashMapOf("BLOCK_TYPE" to Context.ACCOUNT_BLOCK_TYPE["BLOCK_TYPE_PARAM_VALUE_INCOMMING"]))
+    }
+    @Затем("проверки результата")
+    fun checkResult() {
+        val actualCnnService = setUp.findCnnServiceById(cnnService["SERVICE_ID"])
+        Assert.assertEquals("Block type has not changed", actualCnnService.subscriberBlockType, Context.SUBSCRIBER_BLOCK_TYPE[Companion.BLOCKED_INCOMING])
     }
 }
